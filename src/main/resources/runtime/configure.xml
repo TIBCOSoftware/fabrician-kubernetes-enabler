@@ -1,0 +1,6 @@
+<containerConfig name="KuernetesEnabler">
+
+	<configFiles baseDir="data" include="kubeconfig.yaml">
+		<velocity />
+	</configFiles>
+</containerConfig>
