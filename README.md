@@ -199,7 +199,7 @@ The Enabler provides following Silver Fabric runtime variables.
 |`KUBECTL_DOCKER_IMAGE`|tlachlanevenson/k8s-kubectl| String| Kubectl docker image|false|None|
 |`KUBERNETES_ADMIN_PASSWORD`|admin| String| Kubernetes admin password"|false|None|
 |`KUBERNETES_CERT_GROUP`|kube-cert| String| Kubernetes certificate group|false|None|
-|`KUBERNETES_DATA_DIR`|| String| Kubernetes data directory for certs, etc.|false|None|
+|`KUBERNETES_DATA_DIR`|${CONTAINER_WORK_DIR}/data| String| Kubernetes data directory for certs, etc.|false|None|
 |`INSECURE_PORT`|8080| String| Inscure port|false|None|
 |`SECURE_API_SERVER`|flase| String| Flag to secure A{I serverwith SSL and authentication|false|None|
 |`SECURE_PORT`|6443| String| Secure http port|false|None|
@@ -219,7 +219,7 @@ The Enabler provides following Silver Fabric runtime variables.
 ### Component and Stack configuration:
 ---------------------------------------------------
 
-Master and Worker nodes are defined as seaprate Components. Both the Components require
+Master and Worker nodes are defined as separate Components. Both the Components require
 `ETCD_ENDPOINTS` runtime variable. The Worker node must depend on a Master node Component. You may
 run any number of Master or Worker nodes in a Stack configuration. At minimal, you need 1 `etcd-enabler` based Component,
 1 `kubernetes-enabler` based Master node Component, and 1 `kubernetes-enabler` based Worker node Component, which must
