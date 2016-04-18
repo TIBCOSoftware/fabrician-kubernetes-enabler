@@ -160,14 +160,6 @@
 		</variable>
 
 		<variable class="RuntimeContextVariable">
-			<property name="name" value="SERVICE_LABEL" />
-			<property name="value" value="component" />
-			<property name="autoIncrementType" value="None" />
-			<property name="type" value="String" />
-			<property name="description" value="Service label" />
-		</variable>
-
-		<variable class="RuntimeContextVariable">
 			<property name="name" value="FLANNEL_IPMASQ" />
 			<property name="value" value="true" />
 			<property name="autoIncrementType" value="None" />
@@ -238,7 +230,7 @@
 			<property name="value" value="172.47.0.0/16" />
 			<property name="autoIncrementType" value="None" />
 			<property name="type" value="String" />
-			<property name="description" value="service cluster ip range" />
+			<property name="description" value="Service cluster ip range" />
 		</variable>
 
 		<variable class="RuntimeContextVariable">
@@ -246,7 +238,7 @@
 			<property name="value" value="60001-64999" />
 			<property name="autoIncrementType" value="None" />
 			<property name="type" value="String" />
-			<property name="description" value="service node port range" />
+			<property name="description" value="Service node port range" />
 		</variable>
 
 		<variable class="RuntimeContextVariable">

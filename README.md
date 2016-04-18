@@ -2,10 +2,10 @@
 
 ### Introduction
 --------------------------------------
-Kubernetes Enabler is used in conjunction with TIBCO Silver Fabric to create and manage a Kubernetes cluster, and to to continuous deployment
+Kubernetes Enabler is used in conjunction with TIBCO Silver Fabric to create and manage a Kubernetes cluster, and to do continuous deployment
 of Kubernetes based applications.
 
-This Enabler was developed and tested using Kubernetes version 1.2. 
+This Enabler was developed and tested using Kubernetes version 1.20. 
 However, it is expected to  work  with other compatible later versions of Kubernetes. 
 
 ### Solution Architecture
@@ -25,11 +25,11 @@ For each host in the Kubernetes cluster, this Enabler requires two different Doc
 
 The Bootstrap Docker Daemon is used to run following Docker containers on *Master* node:
 
-1. Kubernetes  `apiserver
+1. Kubernetes  `apiserver`
 2. Kubernetes  `scheduler`
 3. Kubernetes  `controller-manager`
 4. Kubernetes  `kubelet`
-5. Kubernetes  `poxy`
+5. Kubernetes  `proxy`
 
 The Bootstrap Docker Daemon is used to run following Docker containers on *Worker* node:
 
@@ -40,7 +40,7 @@ All the containers using the Bootstrap Docker Daemon use `host` networking.
 
 In addition, on each node in the Kubernetes cluster, this enabler configures and starts Flannel overlay netwok.
 
-At the time of the Silver Fabric Component startup, if the Main Docker Daemon is not configured to use the Flannel network bridge, 
+At the time of the Silver Fabric Component (based on this this Enabler) startup, if the Main Docker Daemon is not configured to use the Flannel network bridge, 
 this Enabler  reconfigures the Main Docker Daemon to use the Flannel network bridge as the default Docker bridge, and restarts the Main Docker Daemon. 
 The Main Docker Daemon reconfiguration and restart is done via a  shell script, [`configure-dameon.sh`] (src/main/resources/content/bin/configure-daemon.sh).
 This shell script may need to be customized depending on how Docker has been enabled on a host.
@@ -176,21 +176,64 @@ The Enabler provides following Silver Fabric runtime variables.
 
 |Variable Name|Default Value|Type|Description|Export|Auto Increment|
 |---|---|---|---|---|---|
-|`DOCKER_SWARM_UUID`|| String| Unique UUID for this Kubernetes. |false|None|
+|`ETCD_ENDPOINTS`|| String| REQUIRED: A comma-delimited list of etcd endpoints, e.g. http://foo:4001" |false|None|
+|`CLOUD_PROVIDER`|| String| Cloud provider|false|None|
+|`CLOUD_CONFIG`|| String| Cloud config file|false|None|
+|`CLUSTER_NAME`|kube-cluster| String| Kubernetes cluster name |false|None|
+|`CLUSTER_DNS`|| String| Kubernetes cluster DNS|false|None|
+|`CLUSTER_DOMAIN`|| String| Kubernetes cluster Domain|false|None|
 |`DOCKER_BOOTSTRAP_SOCK`|unix:///var/run/docker-bootstrap.sock| String| Docker daemon socket for running Kubernetes containers is required: This is not the Main Docker Daemon. |false|None|
-|`DISCOVERY_KEY_STORE`|| String| Discovery key store used by Kubernetes cluster and Docker overlay network |false|None|
-|`DISCOVERY_SERVICE`|| String| Discovery service for registering and unregistering Docker services |false|None|
-|`DETACH_SWARM_ON_SHUTDOWN`|false| String| Whether to detach Kubernetes on shutdown of component. If true, Kubernetes cluster is not stopped when component is shutdown. |false|None|
-|`FORCE_RECONFIG`|true| Environment| Force reconfiguration and restart of main docker daemon if it is not using current cluster store |false|None|
-|`DOCKER_COMPOSE_PATH`|/usr/local/bin/docker-compose| String| Docker compose executable path on host Docker services |false|None|
-|`DOCKER_CONFIG_PATH`|/usr/local/bin/docker-compose| String| Docker daemon config file containing OPTIONS='<daemon options>' |false|None|
-|`DOCKER_SWARM_STRATEGY`|spread| String|Docker swarm strategy: 'spread', 'binpack' or 'random' |false|None|
-|`DOCKER_SWARM_NETWORK`|swarm_network|String| Docker swarm network using overlay driver |false|None|
-|`DOCKER_SWARM_NETWORK_OPTIONS`|--subnet=172.18.0.0/16|String| Docker swarm network options using overlay driver |false|None|
-|`COMPOSE_DEPLOY_DIRECTORY`|| String| Compose deploy directory. Must be a shared NFS directory |false|None|
-|`DOCKER_PORT`|2375| String| Main Docker daemon TCP port |false|None|
-|`MANAGE_PORT`|4000| String| Kubernetes manage replica TCP port |false|None|
+|`DOCKER_BRIDGE`|sfdocker0| Environment| Main daemon Docker bridge |false|None|
+|`DOCKER_PORT`|2375| Environment| Docker daemon TCP port |false|None|
+|`ETCDCTL_DOCKER_IMAGE`|tenstartups/etcdctl| String| Etcdctl docker imageh|false|None|
+|`FLANNEL_BRIDGE`|sfdocker1| Environment| Main daemon Flannel Docker bridge |false|None|
+|`FLANNEL_NETWORK`|172.27.0.1/16| Flannel network CIDR notation |false|None|
+|`FLANNEL_NETWORK_IP_RANGE`|172.27.0.1/24| Flannel network IP range |false|None|
+|`FLANNEL_IPMASQ`|true| Whether to do IP masquerade with Flannel network |false|None|
+|`FLANNEL_IFACE`|eth0| Network inerface used with Flannel network|false|None|
+|`KUBECONFIG`${CONTAINER_WORK_DIR}/config/kubeconfig| String| Kubernetes kube config file |false|None|
+|`FLANNEL_ETCD_PREFIX`|/coreos.com/network| String| Flannel network etcd store prefix|false|None|
+|`FLANNEL_DOCKER_IMAGE`|quay.io/coreos/flannel:0.5.5| String| Flanneld docker image|false|None|
+|`FLANNELD_CMD_PATH`|/opt/bin/flanneld| String| Flannel docker image flanneld path|false|None|
+|`HYPERKUBE_DOCKER_IMAGE`|gcr.io/google_containers/hyperkube-amd64:v1.2.0| String| Hyperkube Docker image|false|None|
+|`KUBECTL_DOCKER_IMAGE`|tlachlanevenson/k8s-kubectl| String| Kubectl docker image|false|None|
+|`KUBERNETES_ADMIN_PASSWORD`|admin| String| Kubernetes admin password"|false|None|
+|`KUBERNETES_CERT_GROUP`|kube-cert| String| Kubernetes certificate group|false|None|
+|`KUBERNETES_DATA_DIR`|| String| Kubernetes data directory for certs, etc.|false|None|
+|`INSECURE_PORT`|8080| String| Inscure port|false|None|
+|`SECURE_API_SERVER`|flase| String| Flag to secure A{I serverwith SSL and authentication|false|None|
+|`SECURE_PORT`|6443| String| Secure http port|false|None|
+|`SERVICE_CLUSTER_IP_RANGE`|172.47.0.0/16| String| Service cluster ip range|false|None|
+|`SERVICE_NODE_PORT_RANGE`|60001-64999| String| Service node port range"|false|None|
+|`APISERVER_EXTRA_ARGS`|| String| Api server extra args|false|None|
+|`KUBELET_EXTRA_ARGS`|| String| Kubelet extra args|false|None|
+|`CONTROLLER_MANAGER_EXTRA_ARGS`|| String| Controller manager extra args|false|None|
+|`SCHEDULER_EXTRA_ARGS`|| String| Scheduler extra args|false|None|
+|`PROXY_EXTRA_ARGS`|| String| Proxy extra args|false|None|
+|`DETACH_KUBERNETES_ON_SHUTDOWN`|false| String| Whether to detach Kubernetes on shutdown of component. If true, Kubernetes cluster is not stopped when component is shutdown.|false|None|
+|`FORCE_RECONFIG`|true| Environment| Force reconfiguration and restart of main docker daemon if it is not using flannel network. |false|None|
+|`KUBERNETES_DEPLOY_DIRECTORY`|${CONTAINER_WORK_DIR}/deploy| Environment| Kubernetes deploy directory: Use a shared directory for high-availability.|false|None|
+|`DOCKER_BUILD_OPTIONS`|--quiet=false --no-cache=true --rm=true| Environment| Docker build options|false|None|
 |`USE_SUDO`|false| String| Run Docker with 'sudo'. The 'sudo' command must not prompt for password! |false|None|
+
+### Component and Stack configuration:
+---------------------------------------------------
+
+Master and Worker nodes are defined as seaprate Components. Both the Components require
+`ETCD_ENDPOINTS` runtime variable. The Worker node must depend on a Master node Component. You may
+run any number of Master or Worker nodes in a Stack configuration. At minimal, you need 1 `etcd-enabler` based Component,
+1 `kubernetes-enabler` based Master node Component, and 1 `kubernetes-enabler` based Worker node Component, which must
+depend on the Master node. Both the Master and Worker node Components must depend on the
+`etcd-enabler` based Component.
+
+To configure SSL, you must include following files in the Component under the `data` directory and set
+`SECURE_API_SERVER` to `true`:
+
+1. `server.key`
+2. `server.cert`
+3. `ca.crt`
+4. `kubecfg.crt`
+5. `kubecfg.key`
 
 [Install Docker]:<https://docs.docker.com/installation/>
 [Docker Multi-host Networking]:<https://docs.docker.com/engine/userguide/networking/get-started-overlay/>
