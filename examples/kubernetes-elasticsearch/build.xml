@@ -1,0 +1,36 @@
+<project name='project-release' default="deploy" basedir='.'>
+	<property file="../../build.properties" />
+	<target name="deploy">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="deploy" />
+	</target>
+
+	<target name="deploy-repo">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="deploy-repo" />
+	</target>
+
+	<target name="start">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="start" />
+	</target>
+
+	<target name="stop">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="stop" />
+	</target>
+
+	<target name="repo">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="repo" />
+	</target>
+
+
+	<target name="undeploy">
+		<ant antfile="${build.deploy.project.xml}" dir="${basedir}" target="undeploy" />
+	</target>
+
+	<target name="release">
+		<zip destfile="elasticsearch/elasticsearch.zip" basedir="elasticsearch/spec" />
+	</target>
+	
+	<target name="clean">
+		<delete file="elasticsearch/elasticsearch.zip" quiet="true" />
+	</target>
+
+</project>

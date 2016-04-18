@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ec2.internal
+spec:
+  rules:
+  - host: elasticsearch.ec2.internal
+    http:
+      paths:
+      - backend:
+          serviceName: elasticsearch
+          servicePort: 9200
